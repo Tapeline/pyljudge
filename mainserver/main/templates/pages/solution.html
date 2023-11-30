@@ -1,0 +1,72 @@
+{% extends 'base/base.html' %}
+
+{% load static %}
+
+{% block content %}
+<script src="https://cdnjs.cloudflare.com/ajax/libs/markdown-it/13.0.2/markdown-it.min.js"
+        integrity="sha512-ohlWmsCxOu0bph1om5eDL0jm/83eH09fvqLDhiEdiqfDeJbEvz4FSbeY0gLJSVJwQAp0laRhTXbUQG+ZUuifUQ=="
+        crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+
+<div class="row">
+  <div class="col">
+    <h1>Решение к задаче "{{ object.task.title }}"</h1>
+    <a href="/task/{{object.task.id}}/">К задаче</a>
+    <hr>
+    <h3>Вердикт
+    {% if object.verdict == "OK" %}
+    <span class="badge text-bg-success">{{object.verdict}}</span>
+    {% elif object.verdict == "queued" %}
+    <span class="badge text-bg-warning">{{object.verdict}}</span>
+    {% elif object.verdict == "checking" %}
+    <span class="badge text-bg-warning">{{object.verdict}}</span>
+    {% else %}
+    <span class="badge text-bg-danger">{{object.verdict}}</span>
+    {% endif %}
+    </h3>
+    <h3>Баллов: <span class="badge text-bg-primary">{{object.points}}</span></h3>
+    {% if object.verdict == "RE" %}
+    <p>{{s.error}}</p>
+    {% endif %}
+    <h3>Код</h3>
+    <p>Компилятор: {{ object.compiler }}</p>
+    <pre id="code">{{ object.code }}</pre>
+  </div>
+  <div class="col">
+    <h3>Протокол тестирования</h3>
+    <p>
+      Тестов всего: {{ object.tests_total }}<br>
+      Тестов пройдено: {{ object.tests_passed }}<br>
+      Тестов провалено: {{ object.tests_failed }}
+    </p>
+    <table class="table">
+      <thead>
+        <tr>
+          <th scope="col">Ввод</th>
+          <th scope="col">Ожидаемый вывод</th>
+          <th scope="col">Полученный вывод</th>
+          <th scope="col">Сообщение</th>
+        </tr>
+      </thead>
+      <tbody>
+      {% for t in protocol %}
+        {% if t.test.show %}
+        <tr>
+          <td><pre>{{ t.test.input }}</pre></td>
+          <td><pre>{{ t.test.output }}</pre></td>
+          <td><pre>{{ t.present_output }}</pre></td>
+          <td><pre>{{ t.error }}</pre></td>
+        </tr>
+        {% else %}
+        <tr>
+          <td><span class="badge text-bg-secondary">Скрыто</span></td>
+          <td><span class="badge text-bg-secondary">Скрыто</span></td>
+          <td><span class="badge text-bg-secondary">Скрыто</span></td>
+          <td><pre>{{ t.error }}</pre></td>
+        </tr>
+        {% endif %}
+      {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+{% endblock %}

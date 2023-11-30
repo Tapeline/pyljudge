@@ -1,0 +1,33 @@
+{% extends 'base/base.html' %}
+
+{% block content %}
+  <div class="text-center">
+  <div class="form-signin w-50 m-auto">
+    <form action="{% url 'login' %}" method="POST">
+      <h1 class="h3 mb-3 fw-normal">Login</h1>
+
+      {% if form.errors %}
+        <span class="badge bg-danger mb-3">Authorization failed</span>
+      {% endif %}
+
+      {% csrf_token %}
+
+      {% for item in form %}
+        <div class="form-floating">
+          {% if item.name == "password" %}
+          <input type="password" class="form-control" id="{{ item.name }}"
+                 name="{{ item.name }}" placeholder="{{ item.label }}">
+          {% else %}
+          <input type="text" class="form-control" id="{{ item.name }}"
+                 name="{{ item.name }}" placeholder="{{ item.label }}">
+          {% endif%}
+          <label for="{{ item.name }}">{{ item.label }}</label>
+        </div>
+        <br>
+      {% endfor %}
+
+      <button class="w-100 btn btn-lg btn-primary mt-4 mb-4" type="submit">Sign in</button>
+    </form>
+  </div>
+  </div>
+{% endblock %}

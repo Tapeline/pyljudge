@@ -1,0 +1,16 @@
+{% extends 'base/base.html' %}
+
+{% block content %}
+<div class="alert alert-danger" role="alert">
+  <h4 class="alert-heading">Ошибка</h4>
+  <p>
+    {% for line in msg %}
+    {{ line }}<br>
+    {% endfor %}
+  </p>
+  <hr>
+  <p class="mb-0">
+    <a href="{{ back_url }}" class="btn btn-outline-secondary">{{ back_text }}</a>
+  </p>
+</div>
+{% endblock %}

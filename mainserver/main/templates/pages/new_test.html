@@ -1,0 +1,17 @@
+{% extends 'base/base.html' %}
+
+{% load static %}
+
+{% block content %}
+<h1>Create test</h1>
+<hr>
+<form method="POST">
+  {% csrf_token %}
+  {{ form.as_p }}
+  <div class="d-flex align-items-center flex-column mt-4 mb-4">
+    <input class="btn btn-primary text-center mb-2" style="width: 80%"
+           type="submit" name="apply" value="Create">
+    <a href="/" class="btn btn-secondary text-center" style="width: 80%">Cancel</a>
+  </div>
+</form>
+{% endblock %}

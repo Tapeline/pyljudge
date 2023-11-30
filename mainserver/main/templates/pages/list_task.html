@@ -1,0 +1,44 @@
+{% extends 'base/base.html' %}
+
+{% load static %}
+
+{% block content %}
+<h1>Список задач</h1>
+<hr>
+{% if request.user.is_authenticated and request.user.is_superuser %}
+<a href="/task/create/">Создать</a>
+<hr>
+{% endif %}
+<table class="table">
+  <thead>
+    <tr>
+      <th scope="col">#</th>
+      <th scope="col">Название</th>
+      <th scope="col">Действия</th>
+    </tr>
+  </thead>
+  <tbody>
+  {% for c in object_list %}
+    <tr>
+      <td><a href="/task/{{c.id}}">{{ c.id }}</a></td>
+      <td><a href="/task/{{c.id}}">{{ c.title }}</a></td>
+      <td>
+        <a href="/task/{{c.id}}">Перейти</a>
+        {% if request.user.is_authenticated and request.user.is_superuser %}
+        <br>
+        <a href="/task/{{c.id}}/edit/">Изменить</a>
+        <br>
+        <a href="/task/{{c.id}}/delete/">Удалить</a>
+        {% endif %}
+      </td>
+    </tr>
+  {% empty %}
+    <tr class="table-danger">
+      <td>Задач нет</td>
+      <td></td>
+      <td></td>
+    </tr>
+  {% endfor %}
+  </tbody>
+</table>
+{% endblock %}

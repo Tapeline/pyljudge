@@ -1,0 +1,46 @@
+{% extends 'base/base.html' %}
+
+{% load static %}
+
+{% block content %}
+<h1>Edit task</h1>
+<hr>
+<form method="POST">
+  {% csrf_token %}
+  {{ form.as_p }}
+  <a href="/test/create/">Создать тест</a>
+  <table class="table">
+    <thead>
+      <tr>
+        <th scope="col">#</th>
+        <th scope="col">Ввод</th>
+        <th scope="col">Вывод</th>
+        <th scope="col">Действия</th>
+      </tr>
+    </thead>
+    <tbody>
+    {% for t in tests %}
+      <tr>
+        <td><a href="/contest/{{c.id}}">{{ t.id }}</a></td>
+        <td><pre>{{ t.input }}</pre></td>
+        <td><pre>{{ t.output }}</pre></td>
+        <td><a href="/test/{{t.id}}/delete">Удалить</a>
+        <br>
+        <a href="/test/{{t.id}}/edit">Изменить</a></td>
+      </tr>
+    {% empty %}
+      <tr class="table-danger">
+        <td>Тестов нет</td>
+        <td></td>
+        <td></td>
+      </tr>
+    {% endfor %}
+    </tbody>
+  </table>
+  <div class="d-flex align-items-center flex-column mt-4 mb-4">
+    <input class="btn btn-primary text-center mb-2" style="width: 80%"
+           type="submit" name="apply" value="Apply">
+    <a href="/" class="btn btn-secondary text-center" style="width: 80%">Cancel</a>
+  </div>
+</form>
+{% endblock %}

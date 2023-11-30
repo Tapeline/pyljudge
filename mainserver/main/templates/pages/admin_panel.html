@@ -1,0 +1,53 @@
+{% extends 'base/base.html' %}
+{% load static %}
+
+{% block content %}
+<h1>Admin Panel</h1>
+<div class="card card-body">
+  <a class="btn btn-primary" data-bs-toggle="collapse" href="#userman-collapse"
+     role="button" aria-expanded="false" aria-controls="userman-collapse">
+    Create and delete users
+  </a>
+  <div class="collapse pt-4" id="userman-collapse">
+    <h3>New user</h3>
+    <form action="?cmd=create_user" method="POST" class="row m-1 p-3 card">
+      {% csrf_token %}
+      <input class="form-control col m-1" type="text" name="name" placeholder="Username">
+      <input class="form-control col m-1" type="password" name="pass" placeholder="Password">
+      <input type="submit" value="Create user" class="btn btn-primary col m-1">
+    </form>
+  </div>
+</div>
+
+<div class="card card-body">
+  <a class="btn btn-primary" data-bs-toggle="collapse" href="#users-collapse"
+     role="button" aria-expanded="false" aria-controls="users-collapse">
+    User list
+  </a>
+  <div class="collapse pt-4" id="users-collapse">
+    {% for user in users %}
+    {% if not user.is_superuser and not user.username == request.user.username %}
+    <div class="card mb-3">
+      <div class="card-body">
+      	<div class="form-check">
+            <input class="form-check-input me-3" type="checkbox"
+                   id="usercard_select_{{ user.id }}" value="">
+            <label class="form-check-label" for="usercard_select_{{ user.id }}">
+        	  <h5 class="card-title">{{ user.username }}</h5>
+            </label>
+      	</div>
+        <span class="card-text text-muted mb-4g">{% if user.is_admin %}Admin{% else %}Student{% endif %}</span>
+        <br>
+        {% if user.is_admin %}
+        <a href="?cmd=revoke_admin&user_id={{ user.id }}" class="btn btn-outline-secondary">Revoke admin rights</a>
+        {% else %}
+        <a href="?cmd=grant_admin&user_id={{ user.id }}" class="btn btn-outline-secondary">Grant admin rights</a>
+        {% endif %}
+      </div>
+    </div>
+    {% endif %}
+    {% endfor %}
+  </div>
+</div>
+
+{% endblock %}
