@@ -34,6 +34,7 @@ urlpatterns = [
     path("contest/<int:pk>/edit/", UpdateContestView.as_view()),
     path("contest/<int:pk>/delete/", DeleteContestView.as_view()),
     path("contest/<int:contest>/", ListTaskView.as_view()),
+    path("contest/<int:pk>/standings", DetailStandingsView.as_view()),
 
     path("task/create/", CreateTaskView.as_view()),
     path("task/<int:pk>/edit/", UpdateTaskView.as_view()),
