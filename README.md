@@ -1,5 +1,8 @@
 # pyljudge
 
+Not safe for public use, only local
+
+
 ```
 sudo apt install mysql-server
 sudo mysql_secure_installation
