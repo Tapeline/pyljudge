@@ -1,0 +1,138 @@
+{% extends 'base/base.html' %}
+
+{% load static %}
+
+{% block precontent %}
+<script src="https://cdnjs.cloudflare.com/ajax/libs/markdown-it/13.0.2/markdown-it.min.js"
+        integrity="sha512-ohlWmsCxOu0bph1om5eDL0jm/83eH09fvqLDhiEdiqfDeJbEvz4FSbeY0gLJSVJwQAp0laRhTXbUQG+ZUuifUQ=="
+        crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+<div class="container-fluid">
+  <div class="row p-5">
+    <div class="col-3">
+      <div class="d-flex flex-column align-items-stretch flex-shrink-0 bg-white">
+        <span class="fs-5 fw-semibold">Задачи</span>
+        <br>
+        <a href="/contest/{{object.contest.id}}/">К списку</a>
+        <br>
+        <div class="list-group list-group-flush border-bottom scrollarea">
+          {% for task in tasks %}
+          <a href="/task/{{task.task.id}}/"
+          class="list-group-item list-group-item-action {% if task == object %}active{%endif%} py-3 lh-sm">
+            <div class="d-flex w-100 align-items-center justify-content-between">
+              <strong class="mb-1">{{task.task.title}}</strong>
+              {% if task.verdict == "OK" %}
+              <span class="badge text-bg-success">{{task.pts}}/{{task.task.max_points}}</span>
+              {% elif task.verdict == "no" %}
+              <span class="badge text-bg-secondary">{{task.pts}}/{{task.task.max_points}}</span>
+              {% elif task.verdict == "queued" %}
+              <span class="badge text-bg-warning">{{task.pts}}/{{task.task.max_points}}</span>
+              {% elif task.verdict == "checking" %}
+              <span class="badge text-bg-warning">{{task.pts}}/{{task.task.max_points}}</span>
+              {% else %}
+              <span class="badge text-bg-danger">{{task.pts}}/{{task.task.max_points}}</span>
+              {% endif %}
+            </div>
+          </a>
+          {% endfor %}
+        </div>
+      </div>
+    </div>
+    <div class="col-9">
+      <div class="row">
+        <div class="col">
+          <h1>Задача "{{ object.title }}"</h1>
+          {% if request.user.is_authenticated and request.user.is_superuser %}
+          <a href="/task/{{object.id}}/edit/">Изменить</a>
+          {% endif %}
+          <hr>
+          <p id="desc">{{object.description}}</p>
+        </div>
+        <div class="col">
+          <h3>Примеры тестов</h3>
+          <table class="table">
+            <thead>
+              <tr>
+                <th scope="col">Ввод</th>
+                <th scope="col">Вывод</th>
+              </tr>
+            </thead>
+            <tbody>
+            {% for c in tests %}
+              <tr>
+                <td><pre>{{ c.input }}</pre></td>
+                <td><pre>{{ c.output }}</pre></td>
+              </tr>
+            {% endfor %}
+            </tbody>
+          </table>
+        </div>
+      </div>
+      <div class="row">
+        <form class="col" action="/task/{{object.id}}/submit/" id="solution-form" method="POST">
+          {% csrf_token %}
+          <div class="form-floating">
+            <select class="form-select mb-2" id="floatingSelect" name="compiler">
+              {% for compiler in compilers %}
+              <option value="{{compiler.id}}">{{compiler.name}}</option>
+              {% endfor %}
+            </select>
+            <label for="floatingSelect">Компилятор</label>
+          </div>
+          <textarea name="code" form="solution-form" style="font-family:Consolas,Monaco,Lucida Console,Liberation Mono,
+          DejaVu Sans Mono,Bitstream Vera Sans Mono,Courier New, monospace;"
+                    class="form-control" rows="15"># Enter code here</textarea>
+          <br>
+          <input class="btn btn-primary" type="submit">
+        </form>
+        <div class="col">
+          <h3>Посылки</h3>
+          <table class="table">
+            <thead>
+              <tr>
+                <th scope="col">#</th>
+                <th scope="col">Баллы</th>
+                <th scope="col">Тестов всего</th>
+                <th scope="col">Тестов пройдено</th>
+                <th scope="col">Тестов провалено</th>
+                <th scope="col">Вердикт</th>
+              </tr>
+            </thead>
+            <tbody>
+            {% for s in solutions %}
+              <tr class='{%if s.verdict == "OK"%}table-success
+              {%elif s.verdict == "queued"%}table-warning
+              {%elif s.verdict == "checking"%}table-warning
+              {%else%}table-danger{%endif%}'>
+                <td><a href="/solution/{{s.id}}/">{{ s.id }}</a></td>
+                <td>{{ s.points }}</td>
+                <td>{{ s.tests_total }}</td>
+                <td>{{ s.tests_passed }}</td>
+                <td>{{ s.tests_failed }}</td>
+                <td>
+                  {% if s.verdict == "queued" %}
+                  В очереди
+                  {% elif s.verdict == "checking"%}
+                  Проверка
+                  {%else%}
+                  {{ s.verdict }}
+                  {%endif%}
+                </td>
+              </tr>
+            {% endfor %}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script type="text/javascript">
+  $(document).ready(function () {
+    var md = new markdownit();
+    $("#desc").html(md.render($("#desc").text()));
+  });
+</script>
+{% endblock %}
