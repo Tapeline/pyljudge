@@ -186,6 +186,22 @@ class DetailSolutionView(LoginRequiredMixin, CanViewThisSolution, DetailView):
         return context
 
 
+class DetailStandingsView(LoginRequiredMixin, DetailView):
+    template_name = "pages/standings.html"
+    model = Contest
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["tasks"] = accessor.get_ordered_tasks(self.object)
+        context["task_count"] = len(context["tasks"])
+        context["standings"] = filter(
+            lambda x: x[1] != 0 if x is not None else None,
+            sorted([[user.username] + accessor.get_stats_for_contest(self.object, user)
+                    for user in User.objects.all()], key=lambda x: x[1] if x is not None else None, reverse=True)
+        )
+        return context
+
+
 def ctx(page_name, **kwargs):
     return {
         "page_name": page_name,
