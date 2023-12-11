@@ -33,3 +33,11 @@ def get_ordered_tasks(contest):
             return [tasks.get(id=int(i)) for i in contest.task_ordering.split(";")]
         except:
             return tasks
+
+
+def get_stats_for_contest(contest, user):
+    s = [(lambda x: x.points if x is not None else None)(get_last_solution_for_task(user, task))
+         for task in get_ordered_tasks(contest)]
+    s.insert(0, sum([i for i in s if i is not None]))
+    return s
+

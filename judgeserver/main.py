@@ -31,8 +31,8 @@ class JudgeServer:
         return tests
 
     def place_solution(self, code, ext):
-        with open(f"testenv/solution.{ext}", "w") as f:
-            f.write(code)
+        with open(f"testenv/solution.{ext}", "w", encoding="utf-8") as f:
+            f.write("# -*- coding: utf-8 -*-\n\n" + code)
 
     def purge_solutions(self):
         for root, dirs, files in os.walk("testenv"):

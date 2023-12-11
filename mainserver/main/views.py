@@ -202,6 +202,10 @@ class DetailStandingsView(LoginRequiredMixin, DetailView):
         return context
 
 
+class ExportContextView(LoginRequiredMixin, UserIsAdmin, DetailView):
+    
+
+
 def ctx(page_name, **kwargs):
     return {
         "page_name": page_name,
